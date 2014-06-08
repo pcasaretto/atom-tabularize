@@ -1,9 +1,11 @@
 {
   "name": "tabularize",
   "main": "./lib/tabularize-view",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Atom package for text alignment",
-  "activationEvents": ["tabularize:toggle"],
+  "activationEvents": [
+    "tabularize:toggle"
+  ],
   "repository": "https://github.com/pcasaretto/atom-tabularize",
   "license": "MIT",
   "engines": {
