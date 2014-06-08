@@ -1,0 +1,16 @@
+# See https://atom.io/docs/latest/creating-a-package#menus for more details
+'context-menu':
+  '.overlayer':
+      'Enable tabularize': 'tabularize:toggle'
+
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'tabularize'
+      'submenu': [
+        { 'label': 'Toggle', 'command': 'tabularize:toggle' }
+      ]
+    ]
+  }
+]
