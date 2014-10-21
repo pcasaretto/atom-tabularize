@@ -25,7 +25,7 @@ module.exports =
             else
               cell.trim()
 
-        padded_columns = (Tabularize.paddingColumn(i, stripped_lines) for i in [1..num_columns])
+        padded_columns = (Tabularize.paddingColumn(i, stripped_lines) for i in [0..num_columns-1])
 
         padded_lines = (Tabularize.paddedLine(i, padded_columns) for i in [0..lines.length-1])
 
@@ -47,19 +47,16 @@ module.exports =
       text.replace /\s+$/g, ""
 
     @repeatPadding: (size) ->
-      e = ''
-      while e.length < size
-        e += ' '
-      e
+      Array(size+1).join ' '
 
     # Pad cells of the #nth column
     @paddingColumn: (col_index, matrix) ->
       # Extract the #nth column, extract the biggest cell while at it
       cell_size = 0
       column = _(matrix).map (line) ->
-        if line.length >= col_index
-          cell_size = line[col_index-1].length if cell_size < line[col_index-1].length
-          line[col_index-1]
+        if line.length > col_index
+          cell_size = line[col_index].length if cell_size < line[col_index].length
+          line[col_index]
         else
           null
 
