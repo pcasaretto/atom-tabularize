@@ -16,34 +16,29 @@ module.exports =
         #     intentionally
         #   - Don't strip leading spaces from the first element; we like indenting.
 
+        num_columns = 0
         stripped_lines = _.map lines, (cells) ->
+          num_columns = cells.length if cells.length > num_columns
           cells = _.map cells, (cell, i) ->
             if i == 0
               Tabularize.stripTrailingWhitespace(cell)
             else
               cell.trim()
 
-        biggest_cell = _.chain(stripped_lines).flatten().reduce (memo, cell) ->
-          length = if memo then memo.length else 0
-          if length > cell.length then memo else cell
-        .value()
+        padded_columns = (Tabularize.paddingColumn(i, stripped_lines) for i in [0..num_columns-1])
 
-        cell_size = biggest_cell.length
+        padded_lines = (Tabularize.paddedLine(i, padded_columns) for i in [0..lines.length-1])
 
-        padded_lines = _.map stripped_lines, (cells) ->
-          padded = _.map cells, (cell, i) ->
-            cell = Tabularize.leftAlign(cell, cell_size)
-            if i == cells.length - 1
-              cell = Tabularize.stripTrailingWhitespace(cell)
-            cell
+        result = _(padded_lines).map (line) ->
+          Tabularize.stripTrailingWhitespace(line.join(separator))
+        .join("\n")
 
-          padded.join(separator)
-
-        result = padded_lines.join("\n")
         selection.insertText(result)
 
     # Left align 'string' in a field of size 'fieldwidth'
     @leftAlign: (string, fieldWidth) ->
+      if string is null
+        return null
       spaces = fieldWidth - string.length
       right = spaces
       "#{string}#{Tabularize.repeatPadding(right)}"
@@ -52,7 +47,27 @@ module.exports =
       text.replace /\s+$/g, ""
 
     @repeatPadding: (size) ->
-      e = ''
-      while e.length < size
-        e += ' '
-      e
+      Array(size+1).join ' '
+
+    # Pad cells of the #nth column
+    @paddingColumn: (col_index, matrix) ->
+      # Extract the #nth column, extract the biggest cell while at it
+      cell_size = 0
+      column = _(matrix).map (line) ->
+        if line.length > col_index
+          cell_size = line[col_index].length if cell_size < line[col_index].length
+          line[col_index]
+        else
+          null
+
+      # Pad the cells
+      (Tabularize.leftAlign(cell, cell_size) for cell in column)
+
+    # Extract the #nth line
+    @paddedLine: (line_index, columns) ->
+      # extract #nth line, filter null values and return
+      _.chain(columns).map (column) ->
+        column[line_index]
+      .filter (cell) ->
+        !(cell is null)
+      .value()
