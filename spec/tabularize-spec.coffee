@@ -28,6 +28,17 @@ describe "Tabularize", ->
       editor.insertText("variable => 1\nother => 1")
       editor.selectAll()
 
+    it "tabularize columns", ->
+      regex = "|"
+      text = "a | bbbbbbb | c\naaa | b | ccc"
+      expected = "a   | bbbbbbb | c\naaa | b       | ccc"
+      editor.setText(text)
+      editor.selectAll()
+      Tabularize.tabularize(regex, editor)
+      actual = editor.getText()
+      expect(actual).toEqual(expected)
+
+
   describe ".stripTrailingWhitespace", ->
     it "removes only trailing whitespace from string", ->
       expect(Tabularize.stripTrailingWhitespace("      object    ")).toEqual("      object")
