@@ -53,19 +53,3 @@ describe "Tabularize", ->
   describe ".stripTrailingWhitespace", ->
     it "removes only trailing whitespace from string", ->
       expect(Tabularize.stripTrailingWhitespace("      object    ")).toEqual("      object")
-
-  describe "when the tabularize:toggle event is triggered", ->
-    it "attaches and then detaches the view", ->
-      expect(atom.workspaceView.find('.tabularize')).not.toExist()
-
-      # This is an activation event, triggering it will cause the package to be
-      # activated.
-      atom.workspaceView.trigger 'tabularize:toggle'
-
-      waitsForPromise ->
-        activationPromise
-
-      runs ->
-        expect(atom.workspaceView.find('.tabularize')).toExist()
-        atom.workspaceView.trigger 'tabularize:toggle'
-        expect(atom.workspaceView.find('.tabularize')).not.toExist()
