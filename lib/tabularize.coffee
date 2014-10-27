@@ -5,10 +5,13 @@ module.exports =
 
     @tabularize: (separator, editor) ->
       editor.mutateSelectedText (selection, index) ->
+        separator_regex = RegExp(separator,'g')
         lines = selection.getText().split("\n")
+        matches = []
 
         lines = _(lines).map (line) ->
-          line.split(separator)
+          matches.push line.match(separator_regex)
+          line.split(separator_regex)
 
         # Strip spaces
         #   - Only from non-delimiters; spaces in delimiters must have been matched
@@ -28,9 +31,17 @@ module.exports =
 
         padded_lines = (Tabularize.paddedLine(i, padded_columns) for i in [0..lines.length-1])
 
-        result = _(padded_lines).map (line) ->
-          Tabularize.stripTrailingWhitespace(line.join(" #{separator} "))
-        .join("\n")
+        result = _.chain(padded_lines).zip(matches).map (e) ->
+          line = _(e).first()
+          matches = _(e).last()
+          line = _.chain(line)
+            .zip(matches)
+            .flatten()
+            .compact()
+            .value()
+            .join(' ')
+          Tabularize.stripTrailingWhitespace(line)
+        .value().join("\n")
 
         selection.insertText(result)
 

@@ -40,13 +40,25 @@ describe "Tabularize", ->
       expect(actual).toEqual(expected)
 
     it "tabularizes columns", ->
-      regex = "|"
+      regex = "\\|"
       text = "a | bbbbbbb | c\naaa | b | ccc"
       expected = "a   | bbbbbbb | c\naaa | b       | ccc"
       editor.setText(text)
       editor.selectAll()
       Tabularize.tabularize(regex, editor)
       actual = editor.getText()
+      expect(actual).toEqual(expected)
+
+    it "treats the input as a regex", ->
+      regex = "\\d"
+      text = "a 1 bbbbbbb 2 c\naaa 3 b 4 ccc"
+      expected = "a   1 bbbbbbb 2 c\naaa 3 b       4 ccc"
+      editor.setText(text)
+      editor.selectAll()
+      Tabularize.tabularize(regex, editor)
+      actual = editor.getText()
+      console.log(expected)
+      console.log(actual)
       expect(actual).toEqual(expected)
 
 
