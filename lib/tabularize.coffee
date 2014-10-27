@@ -7,7 +7,6 @@ module.exports =
       editor.mutateSelectedText (selection, index) ->
         lines = selection.getText().split("\n")
 
-        separator = " #{separator} "
         lines = _(lines).map (line) ->
           line.split(separator)
 
@@ -30,7 +29,7 @@ module.exports =
         padded_lines = (Tabularize.paddedLine(i, padded_columns) for i in [0..lines.length-1])
 
         result = _(padded_lines).map (line) ->
-          Tabularize.stripTrailingWhitespace(line.join(separator))
+          Tabularize.stripTrailingWhitespace(line.join(" #{separator} "))
         .join("\n")
 
         selection.insertText(result)

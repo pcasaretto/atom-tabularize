@@ -24,11 +24,22 @@ describe "Tabularize", ->
       {buffer} = editor
 
   describe ".tabularize", ->
-    it "works", ->
-      editor.insertText("variable => 1\nother => 1")
-      editor.selectAll()
 
-    it "tabularize columns", ->
+    it "", ->
+      regex = "values"
+      text = "INSERT INTO region(id, description, active) values(0, 0, 'AB', 'Alberta', true);"
+      text += "\n"
+      text += "INSERT INTO region(id, code, description, active) values (1, 0, 'BC', 'British Columbia', true);"
+      expected = "INSERT INTO region(id, description, active)       values (0, 0, 'AB', 'Alberta', true);"
+      expected += "\n"
+      expected += "INSERT INTO region(id, code, description, active) values (1, 0, 'BC', 'British Columbia', true);"
+      editor.setText(text)
+      editor.selectAll()
+      Tabularize.tabularize(regex, editor)
+      actual = editor.getText()
+      expect(actual).toEqual(expected)
+
+    it "tabularizes columns", ->
       regex = "|"
       text = "a | bbbbbbb | c\naaa | b | ccc"
       expected = "a   | bbbbbbb | c\naaa | b       | ccc"
