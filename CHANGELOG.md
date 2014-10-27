@@ -1,3 +1,9 @@
+## 0.2.0
+
+Breaking Changes
+
+* Add support for regular expressions
+
 ## 0.1.4
 * Fix regression introduced on 0.1.3
 
