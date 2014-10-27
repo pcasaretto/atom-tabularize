@@ -8,7 +8,7 @@ class TabularizeView extends View
 
   @content: ->
     @div class: 'tabularize overlay from-top mini', =>
-      @subview 'miniEditor', new EditorView(mini: true)
+      @subview 'miniEditor', new TextEditorView(mini: true)
 
   detaching: false
 
