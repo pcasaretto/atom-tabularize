@@ -1,7 +1,8 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
-  '.overlayer':
-      'Enable tabularize': 'tabularize:toggle'
+  'atom-workspace': [
+    {label: 'Tabularize', command: 'tabularize:toggle'}
+  ]
 
 'menu': [
   {

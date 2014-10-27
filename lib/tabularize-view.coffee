@@ -1,6 +1,6 @@
 Tabularize = require './tabularize'
 
-{$, EditorView, Point, View} = require 'atom'
+{$, TextEditorView, Point, View} = require 'atom'
 
 module.exports =
 class TabularizeView extends View
