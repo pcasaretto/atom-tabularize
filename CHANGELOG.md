@@ -1,3 +1,7 @@
+## 0.2.1
+* Add alignment buttons to showcase what's to come :)
+* Fix aligment issues when using partial and reversed selections
+
 ## 0.2.0
 
 Breaking Changes
