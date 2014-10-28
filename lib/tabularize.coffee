@@ -4,6 +4,14 @@ module.exports =
   class Tabularize
 
     @tabularize: (separator, editor) ->
+      _(editor.getSelections()).each (selection) ->
+        range = selection.getBufferRange()
+        first_row = range.start.row
+        last_row = range.end.row
+        last_column = range.end.column
+        selection.setBufferRange([[first_row,0],[last_row,last_column]])
+        unless selection.isReversed()
+          selection.selectToEndOfLine()
       editor.mutateSelectedText (selection, index) ->
         separator_regex = RegExp(separator,'g')
         lines = selection.getText().split("\n")

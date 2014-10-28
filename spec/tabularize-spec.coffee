@@ -57,8 +57,37 @@ describe "Tabularize", ->
       editor.selectAll()
       Tabularize.tabularize(regex, editor)
       actual = editor.getText()
-      console.log(expected)
-      console.log(actual)
+      expect(actual).toEqual(expected)
+
+    it "deals with indenting correctly when not selecting whole lines", ->
+      text = "    @on 'core:confirm', => @confirm()"
+      text += "\n"
+      text +="    @on 'core:cancel', => @detach()"
+      expected = "    @on 'core:confirm', => @confirm()"
+      expected += "\n"
+      expected +="    @on 'core:cancel',  => @detach()"
+      regex = "=>"
+      editor.setText(text)
+      editor.setCursorBufferPosition([0,4])
+      editor.selectToBottom()
+      Tabularize.tabularize(regex, editor)
+      actual = editor.getText()
+      expect(actual).toEqual(expected)
+
+    it "deals with partial reverse selections correctly", ->
+      text = "    @on 'core:confirm', => @confirm()"
+      text += "\n"
+      text +="    @on 'core:cancel', => @detach()"
+      expected = "    @on 'core:confirm', => @confirm()"
+      expected += "\n"
+      expected +="    @on 'core:cancel',  => @detach()"
+      regex = "=>"
+      editor.setText(text)
+      editor.moveToBottom()
+      editor.moveToEndOfLine()
+      editor.selectToBufferPosition([0,4])
+      Tabularize.tabularize(regex, editor)
+      actual = editor.getText()
       expect(actual).toEqual(expected)
 
 
