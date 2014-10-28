@@ -9,6 +9,11 @@ class TabularizeView extends View
   @content: ->
     @div class: 'tabularize overlay from-top mini', =>
       @subview 'miniEditor', new TextEditorView(mini: true)
+      @div class: 'block', =>
+        @div class: 'btn-group centered', =>
+          @button class: 'btn selected', 'Left'
+          @button class: 'btn disabled', 'Center'
+          @button class: 'btn disabled', 'Right'
 
   detaching: false
 
@@ -17,9 +22,8 @@ class TabularizeView extends View
       @toggle()
       false
 
-    @miniEditor.hiddenInput.on 'focusout', => @detach() unless @detaching
     @on 'core:confirm', => @confirm()
-    @on 'core:cancel', => @detach()
+    @on 'core:cancel',  => @detach()
 
   toggle: ->
     if @hasParent()
