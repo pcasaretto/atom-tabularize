@@ -4,6 +4,7 @@ module.exports =
   class Tabularize
 
     @tabularize: (separator, editor) ->
+      # Change selections to entire lines inside selections
       _(editor.getSelections()).each (selection) ->
         range = selection.getBufferRange()
         first_row = range.start.row
@@ -12,33 +13,30 @@ module.exports =
         selection.setBufferRange([[first_row,0],[last_row,last_column]])
         unless selection.isReversed()
           selection.selectToEndOfLine()
+
       editor.mutateSelectedText (selection, index) ->
         separator_regex = RegExp(separator,'g')
         lines = selection.getText().split("\n")
         matches = []
 
+        # split lines and save the matches
         lines = _(lines).map (line) ->
           matches.push line.match(separator_regex)
           line.split(separator_regex)
 
-        # Strip spaces
-        #   - Only from non-delimiters; spaces in delimiters must have been matched
-        #     intentionally
-        #   - Don't strip leading spaces from the first element; we like indenting.
+        # strip spaces from cells
+        stripped_lines = Tabularize.stripSpaces(lines)
 
-        num_columns = 0
-        stripped_lines = _.map lines, (cells) ->
-          num_columns = cells.length if cells.length > num_columns
-          cells = _.map cells, (cell, i) ->
-            if i == 0
-              Tabularize.stripTrailingWhitespace(cell)
-            else
-              cell.trim()
+        num_columns = _.chain(stripped_lines).map (cells) ->
+          cells.length
+        .max()
+        .value()
 
         padded_columns = (Tabularize.paddingColumn(i, stripped_lines) for i in [0..num_columns-1])
 
         padded_lines = (Tabularize.paddedLine(i, padded_columns) for i in [0..lines.length-1])
 
+        # Combine padded lines and previously saved matches and join them back
         result = _.chain(padded_lines).zip(matches).map (e) ->
           line = _(e).first()
           matches = _(e).last()
@@ -55,8 +53,6 @@ module.exports =
 
     # Left align 'string' in a field of size 'fieldwidth'
     @leftAlign: (string, fieldWidth) ->
-      if string is null
-        return null
       spaces = fieldWidth - string.length
       right = spaces
       "#{string}#{Tabularize.repeatPadding(right)}"
@@ -86,6 +82,15 @@ module.exports =
       # extract #nth line, filter null values and return
       _.chain(columns).map (column) ->
         column[line_index]
-      .filter (cell) ->
-        !(cell is null)
+      .compact()
       .value()
+
+    @stripSpaces: (lines) ->
+      # Strip spaces
+      #   - Don't strip leading spaces from the first element; we like indenting.
+      _.map lines, (cells) ->
+        cells = _.map cells, (cell, i) ->
+          if i == 0
+            Tabularize.stripTrailingWhitespace(cell)
+          else
+            cell.trim()
