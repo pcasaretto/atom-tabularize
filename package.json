@@ -12,6 +12,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "underscore": "1.x"
+    "underscore": "1.x",
+    "atom-space-pen-views": "^2.0.0"
   }
 }

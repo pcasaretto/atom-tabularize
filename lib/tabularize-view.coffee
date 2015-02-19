@@ -1,6 +1,7 @@
 Tabularize = require './tabularize'
 
-{$, TextEditorView, Point, View} = require 'atom'
+{Point} = require 'atom'
+{$, TextEditorView, View}  = require 'atom-space-pen-views'
 
 module.exports =
 class TabularizeView extends View
@@ -9,6 +10,7 @@ class TabularizeView extends View
   @content: ->
     @div class: 'tabularize overlay from-top mini', =>
       @subview 'miniEditor', new TextEditorView(mini: true)
+      @div class: 'message', outlet: 'message'
       @div class: 'block', =>
         @div class: 'btn-group centered', =>
           @button class: 'btn selected', 'Left'
@@ -18,36 +20,35 @@ class TabularizeView extends View
   detaching: false
 
   initialize: ->
-    atom.workspaceView.command 'tabularize:toggle', '.editor', =>
+    @panel = atom.workspace.addModalPanel(item: this, visible: false)
+
+    atom.commands.add 'atom-text-editor', 'tabularize:toggle', =>
       @toggle()
       false
 
-    @on 'core:confirm', => @confirm()
-    @on 'core:cancel',  => @detach()
+    @miniEditor.on 'blur', => @close()
+    atom.commands.add @miniEditor.element, 'core:confirm', => @confirm()
+    atom.commands.add @miniEditor.element, 'core:cancel', => @close()
 
   toggle: ->
-    if @hasParent()
-      @detach()
+    if @panel.isVisible()
+      @close()
     else
-      @attach()
+      @open()
 
-  detach: ->
-    return unless @hasParent()
+  close: ->
+    return unless @panel.isVisible()
 
-    @detaching = true
-    miniEditorFocused = @miniEditor.isFocused
+    miniEditorFocused = @miniEditor.hasFocus()
     @miniEditor.setText('')
-
-    super
-
+    @panel.hide()
     @restoreFocus() if miniEditorFocused
-    @detaching = false
 
   confirm: ->
     regex = @miniEditor.getText()
     editor = atom.workspace.getActiveEditor()
 
-    @detach()
+    @close()
 
     return unless editor and regex.length
     Tabularize.tabularize(regex, editor)
@@ -59,10 +60,13 @@ class TabularizeView extends View
     if @previouslyFocusedElement?.isOnDom()
       @previouslyFocusedElement.focus()
     else
-      atom.workspaceView.focus()
+      atom.views.getView(atom.workspace).focus()
 
-  attach: ->
-    if editor = atom.workspace.getActiveEditor()
+  open: ->
+    return if @panel.isVisible()
+
+    if editor = atom.workspace.getActiveTextEditor()
       @storeFocusedElement()
-      atom.workspaceView.append(this)
+      @panel.show()
+      @message.text("Use a regex to select the separator")
       @miniEditor.focus()

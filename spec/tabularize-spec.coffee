@@ -1,5 +1,5 @@
-{WorkspaceView} = require 'atom'
 Tabularize = require '../lib/tabularize'
+TabularizeView = require '../lib/tabularize-view'
 
 # Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
 #
@@ -7,21 +7,17 @@ Tabularize = require '../lib/tabularize'
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe "Tabularize", ->
-  activationPromise = null
-  [editorView, editor, buffer] = []
+  [editor, editorView, tabularize] = []
 
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
-    atom.workspaceView.attachToDom()
-    activationPromise = atom.packages.activatePackage('tabularize')
 
     waitsForPromise ->
       atom.workspace.open()
 
     runs ->
-      editorView = atom.workspaceView.getActiveView()
-      {editor} = editorView
-      {buffer} = editor
+      editor = atom.workspace.getActiveTextEditor()
+      editorView = atom.views.getView(editor)
+      tabularize = TabularizeView.activate()
 
   describe ".tabularize", ->
 
