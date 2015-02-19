@@ -1,7 +1,7 @@
 {
   "name": "tabularize",
   "main": "./lib/tabularize-view",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Atom package for text alignment",
   "activationEvents": [
     "tabularize:toggle"
