@@ -46,7 +46,7 @@ class TabularizeView extends View
 
   confirm: ->
     regex = @miniEditor.getText()
-    editor = atom.workspace.getActiveEditor()
+    editor = atom.workspace.getActiveTextEditor()
 
     @close()
 
