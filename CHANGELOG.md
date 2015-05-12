@@ -1,5 +1,5 @@
 ## 0.2.4
-* Fix deprecations (#20)
+* Fix deprecations ([#20](https://github.com/pcasaretto/atom-tabularize/pull/20))
 
 ## 0.2.1
 * Add alignment buttons to showcase what's to come :)
