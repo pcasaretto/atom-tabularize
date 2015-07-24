@@ -21,7 +21,7 @@ module.exports =
 
         # split lines and save the matches
         lines = _(lines).map (line) ->
-          matches.push line.match(separator_regex)
+          matches.push line.match(separator_regex) || ""
           line.split(separator_regex)
 
         # strip spaces from cells
@@ -72,7 +72,7 @@ module.exports =
           cell_size = line[col_index].length if cell_size < line[col_index].length
           line[col_index]
         else
-          null
+          ""
 
       # Pad the cells
       (Tabularize.leftAlign(cell, cell_size) for cell in column)

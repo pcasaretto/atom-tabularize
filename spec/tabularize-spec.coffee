@@ -86,6 +86,19 @@ describe "Tabularize", ->
       actual = editor.getText()
       expect(actual).toEqual(expected)
 
+    it "does not explode with that stupid error", ->
+      text  = "{\n"
+      text += "  \"foo\" : 1,\n"
+      text += "  \"large_row\" : 2,\n"
+      text += "  \"small\" : 3,\n"
+      text += "}\n"
+      editor.setText(text)
+      editor.moveToTop()
+      editor.selectToBufferPosition([4,15])
+      actual = editor.getText()
+      console.log(actual)
+      Tabularize.tabularize(":", editor)
+
 
   describe ".stripTrailingWhitespace", ->
     it "removes only trailing whitespace from string", ->
