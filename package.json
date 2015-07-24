@@ -1,7 +1,7 @@
 {
   "name": "tabularize",
   "main": "./lib/tabularize-view",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Atom package for text alignment",
   "activationCommands": {
     "atom-text-editor": [
